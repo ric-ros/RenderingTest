@@ -1,0 +1,24 @@
+﻿<h3>Wage Form</h3>
+
+@for (int i = 0; i < 1000; i++)
+{
+    <div style="display: flex">
+        <div>
+            <label>First Name @i:</label>
+            <input value="@Person.FirstName" disabled />
+        </div>
+        <div>
+            <label>Last Name @i:</label>
+            <input value="@Person.LastName" disabled />
+        </div>
+        <div>
+            <label>Wage @i:</label>
+            <input @bind="Person.Wage" type="number" />
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public PersonNotifyModel Person { get; set; } = new();
+}

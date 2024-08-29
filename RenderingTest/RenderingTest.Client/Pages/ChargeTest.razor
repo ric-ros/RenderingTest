@@ -1,0 +1,15 @@
+﻿@page "/charges"
+@using System.Collections.ObjectModel
+@inherits TimedComponentBase
+
+<h3>Charge Test</h3>
+
+<RouteComponent @bind-Routes="RoutesList" @bind-HasDetails="HasDetails" />
+
+<ChargeComponent Routes="RoutesList" HasDetails="HasDetails" />
+
+@code {
+    private List<RouteModel> RoutesList = new();
+
+    private bool HasDetails;
+}

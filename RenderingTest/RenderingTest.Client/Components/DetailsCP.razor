@@ -1,0 +1,20 @@
+﻿<h3>Details Form</h3>
+
+<div style="display: flex">
+    <div>
+        <label>First Name:</label>
+        <input @bind="Person.FirstName" @bind:after="OnChange" />
+    </div>
+    <div>
+        <label>Last Name:</label>
+        <input @bind="Person.LastName" @bind:after="OnChange" />
+    </div>
+</div>
+
+@code {
+    [CascadingParameter]
+    public PersonModel Person { get; set; } = new();
+
+    [Parameter]
+    public Action OnChange { get; set; } = () => { };
+}

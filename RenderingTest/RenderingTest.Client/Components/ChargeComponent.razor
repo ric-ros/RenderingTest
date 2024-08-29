@@ -1,0 +1,149 @@
+﻿@using System.Collections.ObjectModel
+@using System.ComponentModel
+@inject IJSRuntime JsRuntime
+
+<h3>Charges</h3>
+
+<style>
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+        .table th, .table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+            .table th:last-child {
+                width: 50px;
+                text-align: center;
+            }
+
+    .column-selector {
+        margin-left: 10px;
+    }
+
+    .route-row {
+        font-weight: bold;
+        background-color: #f0f0f0;
+    }
+
+    .charge-row {
+        cursor: pointer;
+    }
+
+        .charge-row:hover {
+            background-color: #f0f0f0;
+        }
+</style>
+
+<div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Charges</th>
+                @foreach (var column in SelectedColumns)
+                {
+                    <th>@column</th>
+                }
+                <th>
+                    @if (!HasDetails)
+                    {
+                        <select class="column-selector" multiple @onchange="HandleColumnSelection">
+                            @foreach (var column in AllColumns)
+                            {
+                                <option value="@column" selected="@SelectedColumns.Contains(column)">
+                                    @column
+                                </option>
+                            }
+                        </select>
+                    }
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var route in Routes)
+            {
+                <tr class="route-row">
+                    <td colspan="@(SelectedColumns.Count + 2)">@route.Origin -> @route.Destination</td>
+                </tr>
+                @foreach (var charge in ChargesByRoute[GetRouteKey(route)])
+                {
+                    <tr @onclick="() => HandleRowClick(charge, route)" class="charge-row">
+                        <td>@charge.Description</td>
+                        @foreach (var column in SelectedColumns)
+                        {
+                            <td>@(GetChargeValue(charge, column))</td>
+                        }
+                        <td>
+                            <button>x</button>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+
+@code {
+    [Parameter]
+    public List<RouteModel> Routes { get; set; } = [];
+
+    [Parameter]
+    public bool HasDetails { get; set; }
+
+    private Dictionary<string, List<ChargeModel>> ChargesByRoute = [];
+
+    private List<string> AllColumns = new List<string>
+    {
+        "Base", "20'", "40'", "40HC", "Column 1", "Column 2", "Column 3", "Column 4",
+        "Column 5", "Column 6", "Column 7", "Column 8", "Column 9", "Column 10"
+    };
+
+    private List<string> SelectedColumns = ["Base", "20'", "40'", "40HC"];
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        ChargesByRoute = Routes.ToDictionary(GetRouteKey, _ => new List<ChargeModel>
+        {
+            new() { Description = "Ocean Freight", Columns = new Dictionary<string, decimal?> { { "Base", 1000 }, { "20'", 2000 }, { "40'", 3000 }, { "40HC", 4000 } } },
+            new() { Description = "Documentation", Columns = new Dictionary<string, decimal?> { { "Base", 100 }, { "20'", 200 }, { "40'", 300 }, { "40HC", 400 } } },
+            new() { Description = "Customs Clearance", Columns = new Dictionary<string, decimal?> { { "Base", 50 }, { "20'", 100 }, { "40'", 150 }, { "40HC", 200 } } }
+        });
+
+    }
+
+    private string GetRouteKey(RouteModel route) => $"{route.Origin}-{route.Destination}-{route.Currency}";
+
+    private void HandleColumnSelection(ChangeEventArgs e)
+    {
+        var selectedOptions = e.Value as IEnumerable<string>;
+
+        if (selectedOptions is not null)
+        {
+            SelectedColumns = [.. selectedOptions];
+        }
+    }
+
+    private void HandleRowClick(ChargeModel charge, RouteModel route)
+    {
+        // open dialog to change charge values
+
+        // update charge values
+
+        // show alert in the meantime
+
+        JsRuntime.InvokeVoidAsync("alert", $"Charge {charge.Description} of route {GetRouteKey(route)} clicked");
+    }
+
+    private string GetChargeValue(ChargeModel charge, string columnName)
+    {
+        return charge.Columns.TryGetValue(columnName, out var value)
+            ? value?.ToString() ?? string.Empty
+            : string.Empty;
+    }
+}

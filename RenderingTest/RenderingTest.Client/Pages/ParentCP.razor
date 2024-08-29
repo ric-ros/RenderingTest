@@ -1,0 +1,21 @@
+﻿@page "/parent-cp"
+@inherits TimedComponentBase
+
+@using System.Diagnostics
+@using System.ComponentModel
+
+<h3>Parent Component with Cascading Parameters</h3>
+
+<CascadingValue Value="Person">
+    <DetailsCP OnChange="OnDetailsChange" />
+    <WageCP />
+</CascadingValue>
+
+@code {
+    private PersonModel Person = new();
+
+    private void OnDetailsChange()
+    {
+        StateHasChanged();
+    }
+}

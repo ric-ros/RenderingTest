@@ -1,0 +1,29 @@
+﻿@page "/parent-pc"
+@inherits TimedComponentBase
+
+@using System.Diagnostics
+@using System.ComponentModel
+
+<h3>Parent Component with PropertyChanged</h3>
+
+<DetailsPC Person="Person" />
+<WagePC Person="Person" />
+
+@code {
+    private PersonNotifyModel Person = new();
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+
+        if (firstRender)
+        {
+            Person.PropertyChanged += Person_PropertyChanged;
+        }
+    }
+
+    private void Person_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        StateHasChanged();
+    }
+}

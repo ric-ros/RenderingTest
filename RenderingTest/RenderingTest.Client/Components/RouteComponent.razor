@@ -1,0 +1,105 @@
+﻿@using System.Collections.ObjectModel
+@using System.ComponentModel
+@using System.Collections.Specialized
+<h4>Manage Routes</h4>
+
+<div>
+    Generate <input type="number" @bind="RoutesCount" /> routes
+    <button class="btn btn-primary" @onclick="GenerateRoutes">Generate</button>
+    <button class="btn btn-danger" @onclick="ClearRoutes">Clear</button>
+    <label>
+        <input type="checkbox" @bind="HasDetails" @bind:after="() => HasDetailsChanged.InvokeAsync(HasDetails)" />
+        Show details
+    </label>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Origin</th>
+            <th>Destination</th>
+            <th>Currency</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var route in Routes)
+        {
+            <tr>
+                <td><input type="text" @bind="route.Origin" @bind:after="() => RoutesChanged.InvokeAsync(Routes)"/></td>
+                <td><input type="text" @bind="route.Destination" @bind:after="() => RoutesChanged.InvokeAsync(Routes)"/></td>
+                <td><input type="text" @bind="route.Currency" @bind:after="() => RoutesChanged.InvokeAsync(Routes)"/></td>
+                <td>
+                    <button class="btn btn-danger" @onclick="() => RemoveRoute(route)">Remove</button>
+                </td>
+            </tr>
+        }
+        <tr>
+            <td><input type="text" @bind="newRoute.Origin" /></td>
+            <td><input type="text" @bind="newRoute.Destination" /></td>
+            <td><input type="text" @bind="newRoute.Currency" /></td>
+            <td>
+                <button class="btn btn-primary" @onclick="AddNewRoute">Add</button>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+@code {
+    private RouteModel newRoute = new RouteModel();
+    private int RoutesCount = 10;
+
+    [Parameter]
+    public List<RouteModel> Routes { get; set; } = [];
+
+    [Parameter]
+    public EventCallback<List<RouteModel>> RoutesChanged { get; set; }
+
+    [Parameter]
+    public bool HasDetails { get; set; }
+
+    [Parameter]
+    public EventCallback<bool> HasDetailsChanged { get; set; }
+
+
+    private void GenerateRoutes()
+    {
+        int count = Routes.Count;
+
+        for (int i = count; i < RoutesCount + count; i++)
+        {
+            Routes.Add(new RouteModel
+                {
+                    Origin = $"Origin {i}",
+                    Destination = $"Destination {i}",
+                    Currency = $"Currency {i}"
+                });
+        }
+
+        RoutesChanged.InvokeAsync(Routes);
+    }
+
+    private void AddNewRoute()
+    {
+        if (Routes.Any(r => r.Origin == newRoute.Origin && r.Destination == newRoute.Destination && r.Currency == newRoute.Currency))
+        {
+            return;
+        }
+
+        Routes.Add(newRoute);
+        RoutesChanged.InvokeAsync(Routes);
+        newRoute = new RouteModel();
+    }
+
+    private void RemoveRoute(RouteModel route)
+    {
+        Routes.Remove(route);
+        RoutesChanged.InvokeAsync(Routes);
+    }
+
+    private void ClearRoutes()
+    {
+        Routes.Clear();
+        RoutesChanged.InvokeAsync(Routes);
+    }
+}

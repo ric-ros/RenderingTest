@@ -1,0 +1,17 @@
+﻿<h3>Details Form</h3>
+
+    <div style="display: flex">
+        <div>
+            <label>First Name:</label>
+            <input @bind="Person.FirstName" />
+        </div>
+        <div>
+            <label>Last Name:</label>
+            <input @bind="Person.LastName" />
+        </div>
+    </div>
+
+@code {
+    [Parameter]
+    public PersonNotifyModel Person { get; set; } = new();
+}

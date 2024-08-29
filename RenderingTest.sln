@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35201.85
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RenderingTest", "RenderingTest\RenderingTest\RenderingTest.csproj", "{36CD19C7-F2DF-4F2F-BEA9-6268394C1D1C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RenderingTest.Client", "RenderingTest\RenderingTest.Client\RenderingTest.Client.csproj", "{03B505EB-98A1-49A0-93D3-8A6FB5A28DF2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{36CD19C7-F2DF-4F2F-BEA9-6268394C1D1C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{36CD19C7-F2DF-4F2F-BEA9-6268394C1D1C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{36CD19C7-F2DF-4F2F-BEA9-6268394C1D1C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{36CD19C7-F2DF-4F2F-BEA9-6268394C1D1C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{03B505EB-98A1-49A0-93D3-8A6FB5A28DF2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{03B505EB-98A1-49A0-93D3-8A6FB5A28DF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{03B505EB-98A1-49A0-93D3-8A6FB5A28DF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{03B505EB-98A1-49A0-93D3-8A6FB5A28DF2}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {122E5B12-818C-4D42-BDDA-7D8834881883}
+	EndGlobalSection
+EndGlobal
