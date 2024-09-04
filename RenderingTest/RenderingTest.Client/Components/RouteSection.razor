@@ -1,0 +1,85 @@
+﻿@using RenderingTest.Client.ViewModels
+
+
+<div>
+    <button class="btn btn-danger" @onclick="async () => await OnClear.InvokeAsync()">Clear Routes</button>
+</div>
+<div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Origin</th>
+                <th>Destination</th>
+                <th>Currency</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var route in _viewModel?.Routes ?? [])
+            {
+                <tr>
+                    <td><input type="text" @bind="route.Origin" @bind:after="async () => await RouteChanged(route)" /></td>
+                    <td><input type="text" @bind="route.Destination" @bind:after="async () => await RouteChanged(route)" /></td>
+                    <td><input type="text" @bind="route.Currency" @bind:after="async () => await RouteChanged(route)" /></td>
+                    <td>
+                        <button class="btn btn-danger" @onclick="async () => await RemoveRoute(route)">Remove</button>
+                    </td>
+                </tr>
+            }
+            <tr>
+                <td><input type="text" @bind="_origin" /></td>
+                <td><input type="text" @bind="_destination" /></td>
+                <td><input type="text" @bind="_currency" /></td>
+                <td>
+                    <button class="btn btn-primary" @onclick="AddNewRoute">Add</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+@code {
+    [Inject]
+    public DataService DataService { get; set; } = default!;
+
+    [Parameter]
+    public EventCallback<DesignerSectionModel> OnAdd { get; set; }
+
+    [Parameter]
+    public EventCallback<DesignerSectionModel> OnRemove { get; set; }
+
+    [Parameter]
+    public EventCallback<DesignerSectionModel> OnRouteChanged { get; set; }
+
+    [Parameter]
+    public EventCallback OnClear { get; set; }
+
+    private RouteSectionViewModel? _viewModel;
+    private string? _currency = null;
+    private string? _destination = null;
+    private string? _origin = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _viewModel = new(DataService);
+        await _viewModel.InitialiseAsync(string.Empty, default);
+
+        await base.OnInitializedAsync();
+    }
+
+    private async Task AddNewRoute()
+    {
+        RouteViewModel route = new() { Currency = _currency, Destination = _destination, Id = Guid.NewGuid(), Origin = _origin };
+        _viewModel?.AddRoute(route);
+        await OnAdd.InvokeAsync(new() { Id = route.Id, DisplayInfo = $"{_origin} -> {_destination}" });
+    }
+
+    private async Task RemoveRoute(RouteViewModel route)
+    {
+        _viewModel?.Routes.Remove(route);
+        await OnRemove.InvokeAsync(new() { Id = route.Id, DisplayInfo = $"{route.Origin} -> {route.Destination}" });
+    }
+
+    private Task RouteChanged(RouteViewModel route) => OnRouteChanged.InvokeAsync(new() { Id = route.Id, DisplayInfo = $"{route.Origin} -> {route.Destination}" });
+
+}

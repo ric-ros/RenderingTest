@@ -1,0 +1,44 @@
+﻿@page "/zach"
+@using RenderingTest.Client.ViewModels
+
+<h3>Zach Test</h3>
+
+<RouteSection OnAdd="_viewModel.QuoteBatchModel.Routes.Add"
+              OnClear="_viewModel.QuoteBatchModel.Routes.Clear"
+              OnRemove="OnRouteRemoved"
+              OnRouteChanged="OnRouteChanged" />
+@foreach (var route in _viewModel?.QuoteBatchModel?.Routes ?? [])
+{
+    <ChargeSection AssociatedRouteId="@route.Id"
+                   @bind-Header="@route.DisplayInfo"
+                   OnChargeAdded="_viewModel.QuoteBatchModel.Charges.Add" 
+                   OnChargeRemoved="(c) => _viewModel.QuoteBatchModel.Charges.Remove(c)" />
+}
+
+@code {
+    [Inject]
+    public DataService DataService { get; set; } = default!;
+
+    private ZachTestViewModel? _viewModel;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _viewModel = new(DataService);
+        await _viewModel.InitialiseAsync(default);
+
+        await base.OnInitializedAsync();
+    }
+
+    private void OnRouteChanged(DesignerSectionModel route)
+    {
+        var routeModel = _viewModel.QuoteBatchModel.Routes.FirstOrDefault(rm => rm.Id == route.Id);
+        if (routeModel != null)
+            routeModel.DisplayInfo = route.DisplayInfo;
+    }
+
+    private void OnRouteRemoved(DesignerSectionModel route)
+    {
+        _viewModel.QuoteBatchModel.Routes.Remove(route);
+        this.StateHasChanged();
+    }
+}

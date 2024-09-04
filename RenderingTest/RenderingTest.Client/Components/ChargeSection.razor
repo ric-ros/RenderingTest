@@ -1,0 +1,93 @@
+﻿@using RenderingTest.Client.ViewModels
+<div>
+    <div>
+        @Header
+        <label>
+            <input type="checkbox" @bind="_open" @bind:after="OnOpenToggledAsync" />
+            Open
+        </label>
+    </div>
+    @if (_open && _hasInitialised)
+    {
+        <div>
+            <label>
+                Charge
+                <input type="text" @bind="_name" />
+            </label>
+            <button class="btn btn-primary" @onclick="AddNewChargeAsync">Add</button>
+        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Charges</th>
+                    <th>Cost</th>
+                    <th>Mark Up</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var charge in _viewModel?.Charges ?? [])
+                {
+                    <tr>
+                        <td><input type="text" disabled @bind="charge.Name" /></td>
+                        <td><input type="number" @bind="charge.Cost" /></td>
+                        <td><input type="number" @bind="charge.MarkUp" /></td>
+                        <td>
+                            <button class="btn btn-danger" @onclick="async () => await RemoveChargeAsync(charge)">Remove</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
+
+@code {
+    [Inject]
+    public DataService DataService { get; set; } = default!;
+
+    [Parameter]
+    public Guid AssociatedRouteId { get; set; }
+
+    [Parameter]
+    public string? Header { get; set; }
+
+    [Parameter]
+    public EventCallback<string?> HeaderChanged { get; set; }
+
+    [Parameter]
+    public EventCallback<DesignerSectionModel> OnChargeAdded { get; set; }
+
+    [Parameter]
+    public EventCallback<DesignerSectionModel> OnChargeRemoved { get; set; }
+
+    private bool _hasInitialised;
+    private bool _open;
+    private ChargeSectionViewModel? _viewModel;
+
+    private string? _name = null;
+    private int _cost = 0;
+    private int _markUp = 0;
+
+
+    protected override void OnInitialized()
+    {
+        _viewModel = new(DataService, AssociatedRouteId);
+        base.OnInitialized();
+    }
+
+    private async Task OnOpenToggledAsync()
+    {
+        if (!_hasInitialised)
+        {
+            await _viewModel.InitialiseAsync(string.Empty, default);
+            _hasInitialised = true;
+        }
+    }
+
+    private Task AddNewChargeAsync()
+         => OnChargeAdded.InvokeAsync(_viewModel.AddCharge(_name));
+
+    private Task RemoveChargeAsync(ChargeViewModel charge)
+         => OnChargeRemoved.InvokeAsync(_viewModel.RemoveCharge(charge));
+}

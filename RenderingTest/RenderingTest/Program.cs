@@ -1,4 +1,4 @@
-using RenderingTest.Client.Pages;
+using RenderingTest.Client;
 using RenderingTest.Components;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,6 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents()
     .AddInteractiveWebAssemblyComponents();
+builder.Services.AddSingleton<DataService>();
 
 var app = builder.Build();
 
